@@ -42,6 +42,17 @@ def predict(model: nn.Module, dl: torch.utils.data.DataLoader, paths=None, show_
     return TestResult(truth=torch.as_tensor(truth), predictions=torch.as_tensor(preds))
 
 
+def report(result: TestResult, label_names):
+    from sklearn.metrics import classification_report, confusion_matrix
+
+    cr = classification_report(result.truth, result.predictions, target_names=label_names, digits=3)
+    confusion = confusion_matrix(result.truth, result.predictions)
+    print("Classification report")
+    print(cr)
+    print("Confusion matrix")
+    print(confusion)
+
+
 def main(args):
     save = torch.load(args.model, map_location=args.device)
     normalization = save['normalization']
@@ -61,9 +72,9 @@ def main(args):
     )
     result = predict(model, test_dl, paths=args.files)
 
-    if not args.files:
-        # this is the test, so we need to analyze results
-        # TODO
+    if not args.files:  # this is the test, so we need to analyze results
+        report(result, dataset.classes)
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
