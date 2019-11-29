@@ -1,3 +1,5 @@
+#!/bin/env python3
+
 import argparse
 import os
 from collections import namedtuple
@@ -9,9 +11,9 @@ from torch.utils.tensorboard import SummaryWriter
 from torchvision import models, transforms
 from tqdm import tqdm
 
-from dataset import EuroSAT, random_split, ImageFiles
+from dataset import EuroSAT, ImageFiles, random_split
 
-# to be sure that we don't mix them
+# to be sure that we don't mix them, use this instead of a tuple
 TestResult = namedtuple('TestResult', 'truth predictions')
 
 
@@ -88,7 +90,7 @@ def main(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description="""Predict the label on the specified files and outputs the results in csv format.
-        If no file is specified, then run on the test set of EuroSAT and produce a report.""",
+            If no file is specified, then run on the test set of EuroSAT and produce a report.""",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     parser.add_argument(
