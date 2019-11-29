@@ -4,13 +4,12 @@ import os
 import torch
 import torchvision
 from torch import nn
-from tqdm import tqdm, trange
-
-# from torch.utils import make_grid
 from torch.utils.tensorboard import SummaryWriter
 from torchvision import models, transforms
+from tqdm import tqdm, trange
 
 from dataset import EuroSAT, random_split
+from predict import predict
 
 
 class State:
@@ -75,12 +74,14 @@ def main(args):
     State.writer = SummaryWriter()
     # display some examples
     images, labels = next(iter(train_dl))
-    State.writer.add_images('images', images, 0)
+    originals = images * std.view(3, 1, 1) + mean.view(3, 1, 1)
+    State.writer.add_images('images/original', originals, 0)
+    State.writer.add_images('images/normalized', images, 0)
     # writer.add_graph(model, images)
 
     for epoch in trange(args.epochs, desc="Epochs"):
         train_epoch(train_dl, model, loss, optimizer, epoch, args)
-        truth, preds = run_test(val_dl, model)
+        truth, preds = predict(model, val_dl)
 
         torch.save(
             {"normalization": State.normalization, "model_state": model.state_dict()},
@@ -119,7 +120,7 @@ def train_epoch(train_dl, model, loss, optimizer, epoch, args):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('-j', '--workers', default=4, type=int, metavar='N')
     parser.add_argument('--epochs', default=90, type=int, metavar='N')
     parser.add_argument('-b', '--batch-size', default=8, type=int, metavar='N')
@@ -138,5 +139,6 @@ if __name__ == '__main__':
     )
     args = parser.parse_args()
 
-    args.device = torch.device('gpu' if torch.cuda.is_available() else 'cpu')
+    args.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    os.makedirs('weights', exist_ok=True)
     main(args)
