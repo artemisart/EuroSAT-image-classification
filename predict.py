@@ -73,7 +73,6 @@ def main(args):
     if args.files:
         test = ImageFiles(args.files, transform=tr)
     else:
-        print("EUROSAT")
         dataset = EuroSAT(transform=tr)
         trainval, test = random_split(dataset, 0.9, random_state=42)
 
