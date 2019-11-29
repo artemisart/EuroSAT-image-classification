@@ -66,33 +66,33 @@ Predict: 100%|██████████████████████
 Classification report
                       precision    recall  f1-score   support
 
-          AnnualCrop      0.880     0.930     0.904       300
-              Forest      0.973     0.835     0.899       297
-HerbaceousVegetation      0.775     0.911     0.837       302
-             Highway      0.791     0.814     0.802       269
-          Industrial      0.950     0.895     0.922       257
-             Pasture      0.851     0.824     0.837       187
-       PermanentCrop      0.909     0.748     0.821       254
-         Residential      0.934     0.949     0.942       314
-               River      0.816     0.816     0.816       245
-             SeaLake      0.900     0.982     0.939       275
+          AnnualCrop      0.926     0.923     0.925       300
+              Forest      0.963     0.956     0.959       297
+HerbaceousVegetation      0.868     0.934     0.900       302
+             Highway      0.861     0.874     0.867       269
+          Industrial      0.945     0.934     0.939       257
+             Pasture      0.871     0.904     0.887       187
+       PermanentCrop      0.900     0.846     0.872       254
+         Residential      0.958     0.949     0.954       314
+               River      0.895     0.873     0.884       245
+             SeaLake      0.978     0.964     0.971       275
 
-            accuracy                          0.875      2700
-           macro avg      0.878     0.870     0.872      2700
-        weighted avg      0.879     0.875     0.875      2700
+            accuracy                          0.918      2700
+           macro avg      0.916     0.916     0.916      2700
+        weighted avg      0.919     0.918     0.918      2700
 
 Confusion matrix
                       Ann  For  Her  Hig  Ind  Pas  Per  Res  Riv  Sea
-AnnualCrop            279    0    3    4    0    0    5    0    6    3
-Forest                  3  248   21    4    0    9    0    0    2   10
-HerbaceousVegetation    3    4  275    2    0    7    5    1    2    3
-Highway                12    1    1  219    3    3    6    4   20    0
-Industrial              1    0    1    9  230    0    0    9    4    3
-Pasture                 5    2   10    1    0  154    3    2    4    6
-PermanentCrop           7    0   34    6    3    5  190    3    4    2
-Residential             0    0    6    4    3    0    0  298    3    0
-River                   4    0    3   28    3    2    0    2  200    3
-SeaLake                 3    0    1    0    0    1    0    0    0  270
+AnnualCrop            277    0    2    5    0    4    8    0    4    0
+Forest                  0  284    7    0    0    2    0    0    2    2
+HerbaceousVegetation    2    4  282    0    0    6    6    0    0    2
+Highway                10    1    1  235    4    2    5    2    9    0
+Industrial              0    0    2    5  240    0    3    5    2    0
+Pasture                 3    5    2    2    0  169    0    2    2    2
+PermanentCrop           4    0   22    4    2    4  215    1    2    0
+Residential             0    1    4    3    5    0    0  298    3    0
+River                   0    0    2   18    3    3    2    3  214    0
+SeaLake                 3    0    1    1    0    4    0    0    1  265
 ```
 
 You can learn about the available options with `predict.py -h`.
