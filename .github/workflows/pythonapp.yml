@@ -26,7 +26,7 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Run training
       run: |
-        ./train.py --epochs 1
+        python train.py --epochs 1
     - name: Run prediction
       run: |
-        ./predict.py
+        python predict.py
