@@ -6,10 +6,48 @@ a custom loader (subclassing torchvision ImageFolder) to integrate nicely with
 pytorch pipelines (e.g. multithreaded data loaders, transform operations,
 samplers...).
 
+As EuroSAT does not define a test set, I used a 90/10 split with a fixed random
+seed (42) to generate it consistently.  In the [EuroSAT
+paper](https://arxiv.org/abs/1709.00029) the authors found that the best
+performing model is ResNet-50 among the ones they tried so I used this one as
+well (note that this is easily changed).
+
+## Training
+
+The dataset is further splitted for training and validation (so in total we have
+train/val/test: 81/9/10).  First the mean and std is computed on each channel
+across the train set to normalize the images (crucial if we want to use models
+pretrained on ImageNet, and a good idea anyway), and this normalization will be
+saved with the model weights.  I choosed to use tensorboard for logging as I
+find it much more productive than printing to console both for analysis and
+comparison between models/runs/parameters.
+
+For the training I use a bit of data augmentation with random horizontals &
+verticals flips (available with torchvision utilities), and a pretrained
+resnet50 model (with its head replaced as we only have 10 classes).  By default
+only the head is finetuned.  The script can also train a model from scratch
+(`--pretrained no`).
+
+After each epoch, the accuracy is computed on the validation set and the best
+model of the current run is saved in `weights/best.pt` (WARNING: it overwrites
+the checkpoints from previous runs).
+
+```sh
+> tensorboard --logdir runs
+> ./train.py
+...
+New best validation accuracy: 0.8839505910873413
+...
+Epochs: 100% 10/10 [03:02<00:00, 18.14s/it]
+```
+
+You can learn about the available options with `train.py -h`.
+
 ## Inference
 
-The script `predict.py` performs inference.  It loads a model checkpoint (`-m`, by defaults `weights/best.pt`) and predicts on the specified files:
-```
+The script `predict.py` performs inference.  It loads a model checkpoint (`-m`,
+by defaults `weights/best.pt`) and runs it on the specified files:
+```sh
 > ./predict.py one_image.png and_a_folder/*.jpg
 'one_image.png', 0
 'and_a_folder/0.jpg', 2
@@ -17,12 +55,12 @@ The script `predict.py` performs inference.  It loads a model checkpoint (`-m`, 
 ...
 ```
 I choose to output the results in csv format so as to easily integrate this
-script in pipelines.  tqdm may show a progress bar but it uses stderr so doesn't
-affect the output.
+script in any pipeline.  tqdm may show a progress bar but it uses stderr so
+doesn't affect the output.
 
 To get a performance report on the test set of EuroSAT, just omit the
 files option:
-```
+```sh
 > ./predict.py
 Predict: 100%|██████████████████████████████████████████████████| 43/43 [00:22<00:00,  2.47batch/s]
 Classification report
