@@ -15,6 +15,7 @@ from dataset import EuroSAT, random_split, ImageFiles
 TestResult = namedtuple('TestResult', 'truth predictions')
 
 
+@torch.no_grad()
 def predict(model: nn.Module, dl: torch.utils.data.DataLoader, paths=None, show_progress=True):
     """
     Run the model on the specified data.
@@ -47,6 +48,15 @@ def report(result: TestResult, label_names):
 
     cr = classification_report(result.truth, result.predictions, target_names=label_names, digits=3)
     confusion = confusion_matrix(result.truth, result.predictions)
+
+    try:  # add names if pandas is installed, otherwise don't bother but don't crash
+        import pandas as pd
+
+        # keep only initial for columns (or it's too wide when printed)
+        confusion = pd.DataFrame(confusion, index=label_names, columns=[s[:3] for s in label_names])
+    except ImportError:
+        pass
+
     print("Classification report")
     print(cr)
     print("Confusion matrix")
@@ -77,8 +87,14 @@ def main(args):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument('-m', '--model', default='weights/best.pt', type=str, help="Model to use")
+    parser = argparse.ArgumentParser(
+        description="""Predict the label on the specified files and outputs the results in csv format.
+        If no file is specified, then run on the test set of EuroSAT and produce a report.""",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    )
+    parser.add_argument(
+        '-m', '--model', default='weights/best.pt', type=str, help="Model to use for prediction"
+    )
     parser.add_argument(
         '-j',
         '--workers',
@@ -87,7 +103,7 @@ if __name__ == '__main__':
         metavar='N',
         help="Number of workers for the DataLoader",
     )
-    parser.add_argument('-b', '--batch-size', default=8, type=int, metavar='N')
+    parser.add_argument('-b', '--batch-size', default=64, type=int, metavar='N')
     parser.add_argument('files', nargs='*', help="Files to run prediction on")
     args = parser.parse_args()
     args.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
