@@ -1,3 +1,5 @@
+#!/bin/env python3
+
 import argparse
 import os
 
@@ -54,7 +56,7 @@ def main(args):
     )
     mean, std = calc_normalization(train_dl)
     dataset.transform.transforms.append(transforms.Normalize(mean, std))
-    State.normalization = {"mean": mean, "std": std}
+    State.normalization = {'mean': mean, 'std': std}
 
     # load val dataset
     val_dl = torch.utils.data.DataLoader(
@@ -84,8 +86,8 @@ def main(args):
         truth, preds = predict(model, val_dl)
 
         torch.save(
-            {"normalization": State.normalization, "model_state": model.state_dict()},
-            "weights/checkpoint.pt",
+            {'normalization': State.normalization, 'model_state': model.state_dict()},
+            'weights/checkpoint.pt',
         )
 
         val_acc = (truth == preds).float().mean()
@@ -120,6 +122,14 @@ def train_epoch(train_dl, model, loss, optimizer, epoch, args):
 
 
 if __name__ == '__main__':
+
+    def parse_bool(s: str):
+        if s.casefold() in ['1', 'true', 'yes']:
+            return True
+        if s.casefold() in ['0', 'false', 'no']:
+            return False
+        raise ValueError()
+
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('-j', '--workers', default=4, type=int, metavar='N')
     parser.add_argument('--epochs', default=90, type=int, metavar='N')
@@ -135,7 +145,7 @@ if __name__ == '__main__':
         help="weight decay (default: 1e-4)",  # TODO
     )
     parser.add_argument(
-        '--pretrained', dest='pretrained', action='store_true', help="Finetune a pre-trained model"
+        '--pretrained', default=True, type=parse_bool, help="Finetune a pre-trained model"
     )
     args = parser.parse_args()
 
