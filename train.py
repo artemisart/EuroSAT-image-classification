@@ -128,18 +128,22 @@ if __name__ == '__main__':
         raise ValueError()
 
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument('-j', '--workers', default=4, type=int, metavar='N')
-    parser.add_argument('--epochs', default=90, type=int, metavar='N')
-    parser.add_argument('-b', '--batch-size', default=8, type=int, metavar='N')
-    parser.add_argument('--lr', '--learning-rate', default=0.1, type=float, metavar='LR')
+    parser.add_argument(
+        '-j',
+        '--workers',
+        default=4,
+        type=int,
+        metavar='N',
+        help="Number of workers for the DataLoader",
+    )
+    parser.add_argument('--epochs', default=5, type=int, metavar='N', help="Epochs")
+    parser.add_argument('-b', '--batch-size', default=32, type=int, metavar='N', help="Batch size")
+    parser.add_argument(
+        '--lr', '--learning-rate', default=0.1, type=float, metavar='LR', help="Learning rate"
+    )
     # parser.add_argument('--momentum', default=0.9, type=float, metavar='M')
     parser.add_argument(
-        '--wd',
-        '--weight-decay',
-        default=1e-4,
-        type=float,
-        metavar='WD',
-        help="weight decay (default: 1e-4)",  # TODO
+        '--wd', '--weight-decay', default=0, type=float, metavar='WD', help="Weight decay"
     )
     parser.add_argument(
         '--pretrained', default=True, type=parse_bool, help="Finetune a pre-trained model"
