@@ -66,10 +66,11 @@ def report(result: TestResult, label_names):
 
 
 def main(args):
-    save = torch.load(args.model, map_location=args.device)
+    save = torch.load(args.model, map_location='cpu')
     normalization = save['normalization']
     model = models.resnet50(num_classes=save['model_state']['fc.bias'].numel())
     model.load_state_dict(save['model_state'])
+    model = model.to(args.device)
 
     tr = transforms.Compose([transforms.ToTensor(), transforms.Normalize(**normalization)])
     if args.files:
