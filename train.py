@@ -64,18 +64,20 @@ def main(args):
         val_ds, batch_size=args.batch_size, num_workers=args.workers, pin_memory=True
     )
 
-    # create/load model, changing the head
-    model = models.resnet50(pretrained=True)
-    for param in model.parameters():
-        param.requires_grad = False
+    # create/load model, changing the head for our number of classes
+    model = models.resnet50(pretrained=args.pretrained)
+    if args.pretrained:
+        for param in model.parameters():
+            param.requires_grad = False
     model.fc = nn.Linear(model.fc.in_features, len(dataset.classes))
     model = model.to(args.device)
-    loss = nn.CrossEntropyLoss()  # .to(args.device)
-    optimizer = torch.optim.Adam(model.fc.parameters(), lr=args.lr, weight_decay=args.wd)
-    # torch.optim.lr_scheduler.
+    loss = nn.CrossEntropyLoss()
+
+    params = model.fc.parameters() if args.pretrained else model.parameters()
+    optimizer = torch.optim.Adam(params, lr=args.lr, weight_decay=args.wd)
 
     State.writer = SummaryWriter()
-    # display some examples
+    # display some examples in tensorboard
     images, labels = next(iter(train_dl))
     originals = images * std.view(3, 1, 1) + mean.view(3, 1, 1)
     State.writer.add_images('images/original', originals, 0)
