@@ -138,10 +138,10 @@ if __name__ == '__main__':
         metavar='N',
         help="Number of workers for the DataLoader",
     )
-    parser.add_argument('--epochs', default=5, type=int, metavar='N', help="Epochs")
+    parser.add_argument('--epochs', default=15, type=int, metavar='N', help="Epochs")
     parser.add_argument('-b', '--batch-size', default=32, type=int, metavar='N', help="Batch size")
     parser.add_argument(
-        '--lr', '--learning-rate', default=0.1, type=float, metavar='LR', help="Learning rate"
+        '--lr', '--learning-rate', default=0.0001, type=float, metavar='LR', help="Learning rate"
     )
     # parser.add_argument('--momentum', default=0.9, type=float, metavar='M')
     parser.add_argument(
