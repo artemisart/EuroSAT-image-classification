@@ -54,4 +54,5 @@ class ImageFiles(Dataset):
         image = self.loader(self.paths[idx])
         if self.transform is not None:
             image = self.transform(image)
-        return image, None  # explicitly return no target, keep the same interface as torchvision
+        # WARNING -1 indicates no target, it's useful to keep the same interface as torchvision
+        return image, -1
