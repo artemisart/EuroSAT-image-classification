@@ -2,6 +2,7 @@
 
 import argparse
 import os
+import shutil
 
 import torch
 import torchvision
@@ -95,11 +96,7 @@ def main(args):
         if val_acc > State.best_acc:
             print(f"New best validation accuracy: {val_acc}")
             State.best_acc = val_acc
-            # TODO shutil
-            torch.save(
-                {"normalization": State.normalization, "model_state": model.state_dict()},
-                "weights/best.pt",
-            )
+            shutil.copy('weights/checkpoint.pt', 'weights/best.pt')
 
 
 def train_epoch(train_dl, model, loss, optimizer, epoch, args):
